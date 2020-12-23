@@ -5,6 +5,14 @@
 
 ## 使用
 
+- inference
+
+```bash
+python inference.py ../pytorch-image-models/.data/vision/imagenet/ --model resnet18 --pretrained --img 224
+```
+
+这里 `../pytorch-image-models/.data/vision/imagenet/` 为测试样本所在的目录，其下每个目录为一个类别。
+
 - 查看支持模型
 
 ```python
