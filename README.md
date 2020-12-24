@@ -12,22 +12,22 @@
 数据以文件夹的方式存储，需分为 `train` 和 `valid` 2个文件夹，每个文件夹中的每一个文件夹为一个类别，如下所示：
 
 ```
-train_data_folder
-  	train_folder
-  		class0_folder
+train_data_dir
+  	train_dir
+  		class0_dir
   			img0, img1, ..., imgN0
-  		class1_folder
+  		class1_dir
   			img0, img1, ..., imgN1
   		...
-  		classM_folder
+  		classM_dir
   			img0, img1, ..., imgNm
-  	valid_folder
-  		class0_folder
+  	valid_dir
+  		class0_dir
   			img0, img1, ..., imgN0
-  		class1_folder
+  		class1_dir
   			img0, img1, ..., imgN1
   		...
-  		classM_folder
+  		classM_dir
   			img0, img1, ..., imgNm
 ```
 
@@ -35,14 +35,16 @@ train_data_folder
 
 ```bash
 # 从0开始训练
-python train.py train_data_folder --model model_name --proj project_name
+python train.py train_data_dir --model model_name --proj project_name --output out_dir
 # 从预训练模型fineturn
-python train.py train_data_folder --model model_name --proj project_name --pretrained
+python train.py train_data_dir --model model_name --proj project_name --pretrained --output out_dir
 # 从指定checkpoint开始训练
-python train.py train_data_folder --model model_name --proj project_name --initial cpt_path
+python train.py train_data_dir --model model_name --proj project_name --initial cpt_path --output out_dir
 ```
 
 这里使用了 [trains(clearml)](https://github.com/allegroai/clearml) 工具来记录实验过程，`project_name` 为其需要的项目名。
+
+`--output` 指定 checkpoints 存放位置。
 
 ### inference
 

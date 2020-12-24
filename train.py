@@ -558,7 +558,7 @@ def main():
             args.model,
             str(data_config['input_size'][-1])
         ])
-        output_dir = get_outdir(output_base, 'train', exp_name)
+        output_dir = get_outdir(output_base, args.proj_name, exp_name)
         decreasing = True if eval_metric == 'loss' else False
         saver = CheckpointSaver(
             model=model, optimizer=optimizer, args=args, model_ema=model_ema, amp_scaler=loss_scaler,
@@ -697,9 +697,9 @@ def train_epoch(
                         rate_avg=input.size(0) * args.world_size / batch_time_m.avg,
                         lr=lr,
                         data_time=data_time_m))
-                Logger.current_logger().report_scalar("loss", "train", iteration=(epoch * len(loader) + batch_idx), value=losses_m.val)
-                Logger.current_logger().report_scalar("top1", "train", iteration=(epoch * len(loader) + batch_idx), value=top1_m.val)
-                Logger.current_logger().report_scalar("top5", "train", iteration=(epoch * len(loader) + batch_idx), value=top5_m.val)
+                Logger.current_logger().report_scalar("loss", "train", iteration=(epoch * len(loader) + batch_idx), value=losses_m.avg)
+                Logger.current_logger().report_scalar("top1", "train", iteration=(epoch * len(loader) + batch_idx), value=top1_m.avg)
+                Logger.current_logger().report_scalar("top5", "train", iteration=(epoch * len(loader) + batch_idx), value=top5_m.avg)
 
                 if args.save_images and output_dir:
                     torchvision.utils.save_image(
@@ -782,9 +782,9 @@ def validate(model, loader, loss_fn, args, epoch, amp_autocast=suppress, log_suf
                     'Acc@5: {top5.val:>7.4f} ({top5.avg:>7.4f})'.format(
                         log_name, batch_idx, last_idx, batch_time=batch_time_m,
                         loss=losses_m, top1=top1_m, top5=top5_m))
-                Logger.current_logger().report_scalar("loss", "test", iteration=(epoch * len(loader) + batch_idx), value=losses_m.val)
-                Logger.current_logger().report_scalar("top1", "test", iteration=(epoch * len(loader) + batch_idx), value=top1_m.val)
-                Logger.current_logger().report_scalar("top5", "test", iteration=(epoch * len(loader) + batch_idx), value=top5_m.val)
+                Logger.current_logger().report_scalar("loss", "test", iteration=(epoch * len(loader) + batch_idx), value=losses_m.avg)
+                Logger.current_logger().report_scalar("top1", "test", iteration=(epoch * len(loader) + batch_idx), value=top1_m.avg)
+                Logger.current_logger().report_scalar("top5", "test", iteration=(epoch * len(loader) + batch_idx), value=top5_m.avg)
 
     metrics = OrderedDict([('loss', losses_m.avg), ('top1', top1_m.avg), ('top5', top5_m.avg)])
 
