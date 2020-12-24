@@ -5,7 +5,46 @@
 
 ## 使用
 
-- inference
+### 训练自己数据
+
+- 数据准备
+
+数据以文件夹的方式存储，需分为 `train` 和 `valid` 2个文件夹，每个文件夹中的每一个文件夹为一个类别，如下所示：
+
+```
+train_data_folder
+  	train_folder
+  		class0_folder
+  			img0, img1, ..., imgN0
+  		class1_folder
+  			img0, img1, ..., imgN1
+  		...
+  		classM_folder
+  			img0, img1, ..., imgNm
+  	valid_folder
+  		class0_folder
+  			img0, img1, ..., imgN0
+  		class1_folder
+  			img0, img1, ..., imgN1
+  		...
+  		classM_folder
+  			img0, img1, ..., imgNm
+```
+
+- 训练模型
+
+```bash
+# 从0开始训练
+python train.py train_data_folder --model model_name --proj project_name
+# 从预训练模型fineturn
+python train.py train_data_folder --model model_name --proj project_name --pretrained
+# 从指定checkpoint开始训练
+python train.py train_data_folder --model model_name --proj project_name --initial cpt_path
+```
+
+这里使用了 [trains(clearml)](https://github.com/allegroai/clearml) 工具来记录实验过程，`project_name` 为其需要的项目名。
+
+### inference
 
 ```bash
 python inference.py ../pytorch-image-models/.data/vision/imagenet/ --model resnet18 --pretrained --img 224
@@ -13,7 +52,7 @@ python inference.py ../pytorch-image-models/.data/vision/imagenet/ --model resne
 
 这里 `../pytorch-image-models/.data/vision/imagenet/` 为测试样本所在的目录，其下每个目录为一个类别。
 
-- 查看支持模型
+### 查看支持模型
 
 ```python
 from pprint import pprint
@@ -27,7 +66,7 @@ pprint(model_names)
 # exclude_filters：排除模型
 ```
 
-- 获取预训练模型
+### 获取预训练模型
 
 ```python
 import os
@@ -47,7 +86,7 @@ model.eval()
 print('Model %s created, param count: %d' % (model_name, sum([m.numel() for m in model.parameters()]))) # 获取模型参数量
 ```
 
-- 模型参数
+### 模型参数
 
 ```python
 import os
