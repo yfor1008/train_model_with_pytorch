@@ -700,6 +700,7 @@ def train_epoch(
                 Logger.current_logger().report_scalar("loss", "train", iteration=(epoch * len(loader) + batch_idx), value=losses_m.avg)
                 Logger.current_logger().report_scalar("top1", "train", iteration=(epoch * len(loader) + batch_idx), value=top1_m.avg)
                 Logger.current_logger().report_scalar("top5", "train", iteration=(epoch * len(loader) + batch_idx), value=top5_m.avg)
+                Logger.current_logger().report_scalar("lr", "train", iteration=(epoch * len(loader) + batch_idx), value=lr)
 
                 if args.save_images and output_dir:
                     torchvision.utils.save_image(
