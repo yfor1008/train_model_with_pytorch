@@ -31,7 +31,7 @@ from torch.nn.parallel import DistributedDataParallel as NativeDDP
 from timm.data import Dataset, create_loader, resolve_data_config, Mixup, FastCollateMixup, AugMixDataset
 from timm.models import create_model, resume_checkpoint, load_checkpoint, convert_splitbn_model
 from timm.utils import *
-from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy, JsdCrossEntropy
+from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy, JsdCrossEntropy, FocalLoss
 from timm.optim import create_optimizer
 from timm.scheduler import create_scheduler
 from timm.utils import ApexScaler, NativeScaler
@@ -164,8 +164,8 @@ parser.add_argument('--hflip', type=float, default=0.5,
                     help='Horizontal flip training aug probability')
 parser.add_argument('--vflip', type=float, default=0.,
                     help='Vertical flip training aug probability')
-parser.add_argument('--color-jitter', type=float, default=0.4, metavar='PCT',
-                    help='Color jitter factor (default: 0.4)')
+parser.add_argument('--color-jitter', type=float, nargs='+', default=0.4, metavar='PCT',
+                    help='Color jitter factor (default: 0.4), (brightness, contrast, saturation, hue)')
 parser.add_argument('--aa', type=str, default=None, metavar='NAME',
                     help='Use AutoAugment policy. "v0" or "original". (default: None)'),
 parser.add_argument('--aug-splits', type=int, default=0,
@@ -196,6 +196,8 @@ parser.add_argument('--mixup-off-epoch', default=0, type=int, metavar='N',
                     help='Turn off mixup after this epoch, disabled if 0 (default: 0)')
 parser.add_argument('--smoothing', type=float, default=0.1,
                     help='Label smoothing (default: 0.1)')
+parser.add_argument('--focal-loss', action='store_true', default=False,
+                    help='focal loss')
 parser.add_argument('--train-interpolation', type=str, default='random',
                     help='Training interpolation (random, bilinear, bicubic default: "random")')
 parser.add_argument('--drop', type=float, default=0.0, metavar='PCT',
@@ -541,6 +543,8 @@ def main():
         train_loss_fn = SoftTargetCrossEntropy().cuda()
     elif args.smoothing:
         train_loss_fn = LabelSmoothingCrossEntropy(smoothing=args.smoothing).cuda()
+    elif args.focal_loss:
+        train_loss_fn = FocalLoss(num_classes=args.num_classes).cuda()
     else:
         train_loss_fn = nn.CrossEntropyLoss().cuda()
     validate_loss_fn = nn.CrossEntropyLoss().cuda()
