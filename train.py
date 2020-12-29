@@ -39,11 +39,6 @@ from timm.utils import ApexScaler, NativeScaler
 import time
 from trains import Task, Logger
 
-# 设置环境变量，改变模型存储位置
-ENV_XDG_CACHE_HOME = 'XDG_CACHE_HOME'
-model_dir = '/home/train_datas/pretrained_models'
-os.environ.setdefault(ENV_XDG_CACHE_HOME, model_dir) # os.putenv 不起作用
-
 try:
     from apex import amp
     from apex.parallel import DistributedDataParallel as ApexDDP
@@ -76,6 +71,8 @@ parser.add_argument('data', metavar='DIR',
                     help='path to dataset')
 parser.add_argument('--model', default='resnet101', type=str, metavar='MODEL',
                     help='Name of model to train (default: "countception"')
+parser.add_argument('--pretrained_model_dir', default='', type=str,
+                    help='pretrained model directory')
 parser.add_argument('--pretrained', action='store_true', default=False,
                     help='Start with pretrained version of specified network (if avail)')
 parser.add_argument('--initial-checkpoint', default='', type=str, metavar='PATH',
@@ -291,6 +288,12 @@ def _parse_args():
 def main():
     setup_default_logging()
     args, args_text = _parse_args()
+
+
+    # 设置环境变量，改变模型存储位置
+    ENV_XDG_CACHE_HOME = 'XDG_CACHE_HOME'
+    pretrained_model_dir = '/home/train_datas/pretrained_models'
+    os.environ.setdefault(ENV_XDG_CACHE_HOME, pretrained_model_dir) # os.putenv 不起作用
 
 
     # 记录实验数据
