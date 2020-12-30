@@ -48,11 +48,22 @@ python train.py train_data_dir --model model_name --proj project_name --initial 
 
 ### inference
 
+- 使用预训练模型
+
 ```bash
 python inference.py ../pytorch-image-models/.data/vision/imagenet/ --model resnet18 --pretrained --img 224
 ```
 
 这里 `../pytorch-image-models/.data/vision/imagenet/` 为测试样本所在的目录，其下每个目录为一个类别。
+
+- 使用训练好模型：
+
+```bash
+python infer_for_single_image.py data_dir --img_size 224 --num_classes class_num --checkpoint cp_path
+python infer_for_valid.py class_dir --img_size 224 --num_classes class_num --checkpoint cp_path
+# data_dir，其下图像
+# class_dir，其下每个目录为一个类别
+```
 
 ### 查看支持模型
 
